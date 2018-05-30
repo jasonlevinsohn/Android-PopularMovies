@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
@@ -29,31 +30,32 @@ public class MainActivity extends AppCompatActivity {
 
     private MovieGridAdapter movieAdapter;
     private GridView gridView;
-    private Context mContext = this;
+
+    private ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         gridView = (GridView) findViewById(R.id.movies_grid_view);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        loadMovieData();
+        loadMovieData("popularity");
 
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+            gridView.setVisibility(View.INVISIBLE);
+        }
 
         @Override
         protected Movie[] doInBackground(String... params) {
@@ -88,7 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Movie[] movieData) {
+
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            gridView.setVisibility(View.VISIBLE);
+
             ArrayList<Movie> movieArrayList;
+
             if (movieData != null) {
                 for (Movie movie : movieData) {
 
@@ -108,13 +115,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void loadMovieData() {
+    private void loadMovieData(String sortBy) {
        URL movieUrl = NetworkUtils.buildUrl(this, "popular");
        Log.i(TAG, "****************");
        Log.i(TAG, movieUrl.toString());
        Log.i(TAG, "****************");
 
-       new FetchMovieTask().execute("popular");
+       new FetchMovieTask().execute(sortBy);
     }
 
     @Override
@@ -132,8 +139,19 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.sort_popular) {
+            Log.i(TAG, "********************");
+            Log.i(TAG, "Sort Popular");
+            Log.i(TAG, "********************");
+            loadMovieData("popularity");
             return true;
+        } else if (id == R.id.sort_toprated) {
+            Log.i(TAG, "********************");
+            Log.i(TAG, "Top Rated");
+            Log.i(TAG, "********************");
+            loadMovieData("top_rated");
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);

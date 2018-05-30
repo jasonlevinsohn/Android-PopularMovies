@@ -19,7 +19,7 @@ public final class NetworkUtils {
 
     private static final String MOVIESDB_BASE_URL =
             "https://api.themoviedb.org/3/discover/movie";
-    private static final String MOVIEDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
+    private static final String MOVIEDB_POSTER_BASE_URL = "https://image.tmdb.org";
 
     private static final String API_KEY = "api_key";
     private static final String LANGUAGE_KEY = "language";
@@ -39,25 +39,19 @@ public final class NetworkUtils {
      * @param posterFileName accepts the poster file name
      * @return The url used to get the poster image
      */
-    public static URL buildPosterUrl(String posterImageName) {
+    public static Uri buildPosterUrl(String posterImageName) {
         if (posterImageName != null) {
             Uri buildUri = Uri.parse(MOVIEDB_POSTER_BASE_URL).buildUpon()
-                    .encodedPath(posterImageName)
+                    .encodedPath("t/p/w185" + posterImageName)
                     .build();
 
-            URL url = null;
-            try {
-                url = new URL(buildUri.toString());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
 
             Log.i(TAG, "********************");
             Log.i(TAG, "Poster Image URL");
-            Log.i(TAG, url.toString());
+            Log.i(TAG, buildUri.toString());
             Log.i(TAG, "********************");
 
-            return url;
+            return buildUri;
         } else {
             return null;
         }
@@ -71,7 +65,7 @@ public final class NetworkUtils {
     public static URL buildUrl(Context context, String sortBy) {
         String apiKey = context.getString(R.string.THE_MOVIE_DB_API_KEY);
 
-        if (sortBy == "vote") {
+        if (sortBy == "top_rated") {
             SORT_BY = "vote_average.desc";
         } else if (sortBy.length() == 0 || sortBy == "popularity") {
             SORT_BY = "popularity.desc";

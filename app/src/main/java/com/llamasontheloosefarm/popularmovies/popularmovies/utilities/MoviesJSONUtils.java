@@ -20,6 +20,7 @@ public final class MoviesJSONUtils {
 
         final String MOVIE_MESSAGE_CODE = "cod";
         final String MOVIE_TITLE = "original_title";
+        final String MOVIE_POSTER_PATH = "poster_path";
 
 
         Movie[] parsedMovieData = null;
@@ -46,7 +47,8 @@ public final class MoviesJSONUtils {
 
             JSONObject movieObj = movieArray.getJSONObject(i);
             String title = movieObj.getString(MOVIE_TITLE);
-            Movie movie = new Movie(title);
+            String posterImage = movieObj.getString(MOVIE_POSTER_PATH);
+            Movie movie = new Movie(title, posterImage);
             parsedMovieData[i] = movie;
 
         }
