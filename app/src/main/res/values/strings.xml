@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">PopularMovies</string>
-    <string name="action_settings">Settings</string>
     <string name="tv_movie_title_label">Title</string>
     <string name="tv_movie_release_date">Release Date</string>
     <string name="tv_movie_vote_average_label">Vote Average</string>
     <string name="tv_movie_plot_label">The Plot Thickins</string>
+    <string name="iv_poster_description">Poster Image of Movie</string>
+    <string name="sort_popular">Popular</string>
+    <string name="sort_toprated">Top Rated</string>
 </resources>

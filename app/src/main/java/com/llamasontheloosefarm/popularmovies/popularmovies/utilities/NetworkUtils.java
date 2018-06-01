@@ -35,7 +35,7 @@ public final class NetworkUtils {
 //    https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg
 
     /** Builds the URL for the movie poster image
-     * @param posterFileName accepts the poster file name
+     * @param posterImageName accepts the poster file name
      * @return The url used to get the poster image
      */
     public static Uri buildPosterUrl(String posterImageName) {
