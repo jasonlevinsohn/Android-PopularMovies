@@ -1,6 +1,7 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
@@ -91,10 +93,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Movie[] movieData) {
 
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            gridView.setVisibility(View.VISIBLE);
-
-            ArrayList<Movie> movieArrayList;
+            final ArrayList<Movie> movieArrayList;
 
             if (movieData != null) {
                 for (Movie movie : movieData) {
@@ -106,7 +105,33 @@ public class MainActivity extends AppCompatActivity {
                 movieArrayList = new ArrayList<Movie>(Arrays.asList(movieData));
                 movieAdapter = new MovieGridAdapter(MainActivity.this, movieArrayList);
                 gridView.setAdapter(movieAdapter);
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Context context = MainActivity.this;
+                        Class dest = ChildActivity.class;
+                        Movie selectedMovie =  movieArrayList.get(i);
+                        String title = selectedMovie.getTitle();
+                        String poster = selectedMovie.getPosterImage();
+                        String releaseDate = selectedMovie.getReleaseDate();
+                        String voteAverage = selectedMovie.getVoteAverage();
+                        String plot = selectedMovie.getPlot();
+
+                        Intent intent = new Intent(context, dest);
+                        intent.putExtra("movieTitle", title);
+                        intent.putExtra("moviePoster", poster);
+                        intent.putExtra("movieReleaseDate", releaseDate);
+                        intent.putExtra("movieVoteAverage", voteAverage);
+                        intent.putExtra("moviePlot", plot);
+
+                        startActivity(intent);
+                    }
+                });
             }
+
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            gridView.setVisibility(View.VISIBLE);
+
 
 
         }

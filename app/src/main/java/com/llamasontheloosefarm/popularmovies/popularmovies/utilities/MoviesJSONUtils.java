@@ -1,6 +1,7 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 
@@ -14,13 +15,17 @@ public final class MoviesJSONUtils {
 
     public static Movie[] getSimpleMovieStingsFromJSON(Context context, String movieJSON) throws JSONException {
 
-        final String MOVIE_LIST = "results";
+        final String TAG = "Movie JSON Extraction";
 
+        final String MOVIE_LIST = "results";
 
 
         final String MOVIE_MESSAGE_CODE = "cod";
         final String MOVIE_TITLE = "original_title";
         final String MOVIE_POSTER_PATH = "poster_path";
+        final String RELEASE_DATE = "release_date";
+        final String VOTE_AVERAGE = "vote_average";
+        final String OVERVIEW = "overview";
 
 
         Movie[] parsedMovieData = null;
@@ -48,7 +53,18 @@ public final class MoviesJSONUtils {
             JSONObject movieObj = movieArray.getJSONObject(i);
             String title = movieObj.getString(MOVIE_TITLE);
             String posterImage = movieObj.getString(MOVIE_POSTER_PATH);
-            Movie movie = new Movie(title, posterImage);
+            String releaseDate = movieObj.getString(RELEASE_DATE);
+            Double voteAverageLong = movieObj.getDouble(VOTE_AVERAGE);
+            String voteAverageString = voteAverageLong.toString();
+            String plot = movieObj.getString(OVERVIEW);
+
+            Log.i(TAG, "********************");
+            Log.i(TAG, "Plot");
+            Log.i(TAG, plot);
+            Log.i(TAG, "********************");
+
+
+            Movie movie = new Movie(title, posterImage, releaseDate, voteAverageString, plot);
             parsedMovieData[i] = movie;
 
         }

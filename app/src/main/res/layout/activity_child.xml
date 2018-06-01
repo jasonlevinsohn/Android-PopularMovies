@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChildActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_movie_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:background="@color/colorPrimaryDark"
+                android:scaleType="fitCenter" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/tv_movie_title_label"
+                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_movie_title"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="15dp"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="@string/tv_movie_release_date"
+                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_movie_release_date"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="15dp"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="@string/tv_movie_vote_average_label"
+                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_movie_vote_average"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="15dp"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout> <!-- End top text layout-->
+
+        </LinearLayout> <!--End Top Horizontal Layout-->
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:padding="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/tv_movie_plot_label"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_movie_plot"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout> <!--Plot Layout Vertical-->
+
+        </ScrollView>
+
+    </LinearLayout> <!--Main Vertical Layout for whole Activity-->
+
+</android.support.constraint.ConstraintLayout>
