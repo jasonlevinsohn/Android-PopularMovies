@@ -1,7 +1,6 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 
@@ -57,12 +56,6 @@ public final class MoviesJSONUtils {
             Double voteAverageLong = movieObj.getDouble(VOTE_AVERAGE);
             String voteAverageString = voteAverageLong.toString();
             String plot = movieObj.getString(OVERVIEW);
-
-            Log.i(TAG, "********************");
-            Log.i(TAG, "Plot");
-            Log.i(TAG, plot);
-            Log.i(TAG, "********************");
-
 
             Movie movie = new Movie(title, posterImage, releaseDate, voteAverageString, plot);
             parsedMovieData[i] = movie;

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="THE_MOVIE_DB_API_KEY">Put your api key here and remove _example from the file name.</string>
+    <string name="THE_MOVIE_DB_API_KEY_EXAMPLE">Put your api key here and remove _example from the file name. And from this name Attribute</string>
 </resources>

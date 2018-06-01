@@ -4,15 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 public class ChildActivity extends AppCompatActivity {
 
@@ -67,11 +63,6 @@ public class ChildActivity extends AppCompatActivity {
 
         if (fromIntent.hasExtra("moviePlot")) {
            moviePlot = fromIntent.getStringExtra("moviePlot");
-
-           Log.i(TAG, "********************");
-           Log.i(TAG, "Movie Plot in Child Activity");
-           Log.i(TAG, moviePlot);
-           Log.i(TAG, "********************");
 
            mPlot = (TextView) findViewById(R.id.tv_movie_plot);
            mPlot.setText(moviePlot);

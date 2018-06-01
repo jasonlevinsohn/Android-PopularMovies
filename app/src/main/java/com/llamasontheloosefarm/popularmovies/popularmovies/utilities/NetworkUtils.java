@@ -2,7 +2,6 @@ package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.R;
 
@@ -44,12 +43,6 @@ public final class NetworkUtils {
             Uri buildUri = Uri.parse(MOVIEDB_POSTER_BASE_URL).buildUpon()
                     .encodedPath("t/p/w185" + posterImageName)
                     .build();
-
-
-            Log.i(TAG, "********************");
-            Log.i(TAG, "Poster Image URL");
-            Log.i(TAG, buildUri.toString());
-            Log.i(TAG, "********************");
 
             return buildUri;
         } else {

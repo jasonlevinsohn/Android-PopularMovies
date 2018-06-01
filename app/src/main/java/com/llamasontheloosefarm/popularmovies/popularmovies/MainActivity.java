@@ -4,16 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -73,10 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
             URL movieUrl = NetworkUtils.buildUrl(MainActivity.this, sortBy );
 
-            Log.i(TAG, "**********");
-            Log.i(TAG, movieUrl.toString());
-            Log.i(TAG, "**********");
-
             try {
                 String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(movieUrl);
 
@@ -96,12 +87,6 @@ public class MainActivity extends AppCompatActivity {
             final ArrayList<Movie> movieArrayList;
 
             if (movieData != null) {
-                for (Movie movie : movieData) {
-
-                    Log.i(TAG, "\n\n***************");
-                    Log.i(TAG, movie.getTitle());
-                    Log.i(TAG, "***************");
-                }
                 movieArrayList = new ArrayList<Movie>(Arrays.asList(movieData));
                 movieAdapter = new MovieGridAdapter(MainActivity.this, movieArrayList);
                 gridView.setAdapter(movieAdapter);
@@ -142,10 +127,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadMovieData(String sortBy) {
        URL movieUrl = NetworkUtils.buildUrl(this, "popular");
-       Log.i(TAG, "****************");
-       Log.i(TAG, movieUrl.toString());
-       Log.i(TAG, "****************");
-
        new FetchMovieTask().execute(sortBy);
     }
 
@@ -165,18 +146,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.sort_popular) {
-            Log.i(TAG, "********************");
-            Log.i(TAG, "Sort Popular");
-            Log.i(TAG, "********************");
             loadMovieData("popularity");
             return true;
         } else if (id == R.id.sort_toprated) {
-            Log.i(TAG, "********************");
-            Log.i(TAG, "Top Rated");
-            Log.i(TAG, "********************");
             loadMovieData("top_rated");
             return true;
-
         }
 
         return super.onOptionsItemSelected(item);

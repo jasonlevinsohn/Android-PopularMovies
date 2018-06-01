@@ -1,15 +1,12 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
@@ -19,13 +16,10 @@ import java.util.ArrayList;
 
 public class MovieGridAdapter extends ArrayAdapter<Movie> {
     private static final String TAG = MovieGridAdapter.class.getSimpleName();
-    private ArrayList<Movie> mMovieGridData;
 
 
     public MovieGridAdapter(Activity context, ArrayList<Movie> popularMovies) {
         super(context, 0, popularMovies);
-        this.mMovieGridData = popularMovies;
-
     }
 
     @Override
