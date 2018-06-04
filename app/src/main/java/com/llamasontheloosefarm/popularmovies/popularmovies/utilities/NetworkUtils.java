@@ -2,7 +2,6 @@ package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 
 import android.content.Context;
 import android.net.Uri;
-
 import com.llamasontheloosefarm.popularmovies.popularmovies.R;
 
 import java.io.IOException;
@@ -16,23 +15,14 @@ public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    private static final String MOVIESDB_BASE_URL =
-            "https://api.themoviedb.org/3/discover/movie";
+    private static final String MOVIES_DB_BASE_URL =
+            "https://api.themoviedb.org";
     private static final String MOVIEDB_POSTER_BASE_URL = "https://image.tmdb.org";
 
     private static final String API_KEY = "api_key";
     private static final String LANGUAGE_KEY = "language";
     private static final String LANGUAGE = "en-US";
-    private static final String SORT_BY_KEY = "sort_by";
-    private static String SORT_BY = "popularity.desc";
-    private static final String INCLUDE_ADULT_KEY = "include_adult";
-    private static final String INCLUDE_ADULT = "false";
-    private static final String INCLUDE_VIDEO_KEY = "include_video";
-    private static final String INCLUDE_VIDEO = "false";
-
-//    https://api.themoviedb.org/3/discover/movie?api_key=60007b942d38fc29b45b19302efb7969&language=en-US
-// &sort_by=popularity.desc&include_adult=false&include_video=false
-//    https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg
+    private static String SORT_BY = "popular";
 
     /** Builds the URL for the movie poster image
      * @param posterImageName accepts the poster file name
@@ -59,20 +49,19 @@ public final class NetworkUtils {
         String apiKey = context.getString(R.string.THE_MOVIE_DB_API_KEY);
 
         if (sortBy == "top_rated") {
-            SORT_BY = "vote_average.desc";
+            SORT_BY = "top_rated";
         } else if (sortBy.length() == 0 || sortBy == "popularity") {
-            SORT_BY = "popularity.desc";
+            SORT_BY = "popular";
         }
 
-        Uri builtUri = Uri.parse(MOVIESDB_BASE_URL).buildUpon()
+        Uri builtUri = Uri.parse(MOVIES_DB_BASE_URL).buildUpon()
+                .encodedPath("3/movie/" + SORT_BY)
                 .appendQueryParameter(API_KEY, apiKey)
                 .appendQueryParameter(LANGUAGE_KEY, LANGUAGE)
-                .appendQueryParameter(SORT_BY_KEY, SORT_BY)
-                .appendQueryParameter(INCLUDE_ADULT_KEY, INCLUDE_ADULT)
-                .appendQueryParameter(INCLUDE_VIDEO_KEY, INCLUDE_VIDEO)
                 .build();
 
         URL url = null;
+
         try {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {

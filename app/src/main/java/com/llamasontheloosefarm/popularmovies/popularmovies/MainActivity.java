@@ -103,11 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         String plot = selectedMovie.getPlot();
 
                         Intent intent = new Intent(context, dest);
-                        intent.putExtra("movieTitle", title);
-                        intent.putExtra("moviePoster", poster);
-                        intent.putExtra("movieReleaseDate", releaseDate);
-                        intent.putExtra("movieVoteAverage", voteAverage);
-                        intent.putExtra("moviePlot", plot);
+                        intent.putExtra("movie", selectedMovie);
 
                         startActivity(intent);
                     }

@@ -1,6 +1,9 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies.models;
 
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Movie implements Parcelable {
 
     private String title;
     private String posterImage;
@@ -29,4 +32,38 @@ public class Movie {
     public String getVoteAverage() { return this.voteAverage; }
 
     public String getPlot() { return this.plot; }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeString(this.posterImage);
+        dest.writeString(this.releaseDate);
+        dest.writeString(this.voteAverage);
+        dest.writeString(this.plot);
+    }
+
+    protected Movie(Parcel in) {
+        this.title = in.readString();
+        this.posterImage = in.readString();
+        this.releaseDate = in.readString();
+        this.voteAverage = in.readString();
+        this.plot = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }
