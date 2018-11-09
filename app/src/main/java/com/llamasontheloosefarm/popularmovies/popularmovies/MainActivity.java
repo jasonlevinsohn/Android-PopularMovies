@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
@@ -20,6 +23,8 @@ import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUti
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         loadMovieData("popularity");
+
+        Stetho.initializeWithDefaults(this);
+
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
 
     }
 
@@ -97,10 +108,12 @@ public class MainActivity extends AppCompatActivity {
                         Class dest = ChildActivity.class;
                         Movie selectedMovie =  movieArrayList.get(i);
                         String title = selectedMovie.getTitle();
-                        String poster = selectedMovie.getPosterImage();
-                        String releaseDate = selectedMovie.getReleaseDate();
-                        String voteAverage = selectedMovie.getVoteAverage();
-                        String plot = selectedMovie.getPlot();
+//                        String poster = selectedMovie.getPosterImage();
+//                        String releaseDate = selectedMovie.getReleaseDate();
+//                        String voteAverage = selectedMovie.getVoteAverage();
+//                        String plot = selectedMovie.getPlot();
+
+                        Log.d(TAG, "Movie Id Title: " + title);
 
                         Intent intent = new Intent(context, dest);
                         intent.putExtra("movie", selectedMovie);
@@ -122,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void loadMovieData(String sortBy) {
-       URL movieUrl = NetworkUtils.buildUrl(this, "popular");
+//       URL movieUrl = NetworkUtils.buildUrl(this, "popular");
        new FetchMovieTask().execute(sortBy);
     }
 

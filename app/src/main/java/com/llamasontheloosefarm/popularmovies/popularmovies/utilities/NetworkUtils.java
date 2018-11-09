@@ -41,6 +41,28 @@ public final class NetworkUtils {
 
     }
 
+    public static URL buildTrailerUrl(Context context, String movieId) {
+
+//        https://api.themoviedb.org/3/movie/13/videos?api_key=60007b942d38fc29b45b19302efb7969&language=en-US
+        String apiKey = context.getString(R.string.THE_MOVIE_DB_API_KEY);
+
+        Uri buildUri = Uri.parse(MOVIES_DB_BASE_URL).buildUpon()
+                .encodedPath("3/movie/" + movieId + "/videos")
+                .appendQueryParameter(API_KEY, apiKey)
+                .appendQueryParameter(LANGUAGE_KEY, LANGUAGE)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(buildUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     /**
      * @param sortBy accepts either `popular` or `recent`
      * @return The URL to use to query the weather server.

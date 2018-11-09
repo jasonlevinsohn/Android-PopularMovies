@@ -2,14 +2,19 @@ package com.llamasontheloosefarm.popularmovies.popularmovies;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 
 public class ChildActivity extends AppCompatActivity {
 
@@ -37,8 +42,11 @@ public class ChildActivity extends AppCompatActivity {
         if (fromIntent.hasExtra("movie")) {
             selectedMovie = fromIntent.getParcelableExtra("movie");
         } else {
-            selectedMovie = new Movie("", "", "", "", "");
+            selectedMovie = new Movie("","", "", "", "", "");
         }
+
+        Log.d(TAG, "Movie Id: " + selectedMovie.getMovieId());
+        Log.d(TAG, "Movie Id Title: " + selectedMovie.getTitle());
 
         moviePosterString = selectedMovie.getPosterImage();
         moviePosterUri = NetworkUtils.buildPosterUrl(moviePosterString);
@@ -68,5 +76,31 @@ public class ChildActivity extends AppCompatActivity {
        mPlot.setText(moviePlot);
 
 
+    }
+
+    public class FetchMovieTrailers extends AsyncTask<String, Void, Trailer[]> {
+        @Override
+        protected Trailer[] doInBackground(String... params) {
+//            return new Trailer[0];
+            if (params.length == 0) {
+                return null;
+            }
+
+            String movieId = "";
+
+            if (params[0] != null) {
+                movieId = params[0];
+            }
+
+            URL trailerUrl = NetworkUtils.buildTrailerUrl(ChildActivity.this, movieId);
+
+            try {
+                String jsonTrailersResponse = NetworkUtils.getResponseFromHttpUrl(trailerUrl);
+
+            } catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }

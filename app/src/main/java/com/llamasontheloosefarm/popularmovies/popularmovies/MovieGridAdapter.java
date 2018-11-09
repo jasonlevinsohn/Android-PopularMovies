@@ -33,6 +33,9 @@ public class MovieGridAdapter extends ArrayAdapter<Movie> {
 
         ImageView posterImageView = (ImageView) convertView.findViewById(R.id.movie_poster_image);
 
+        // Scales the image to fit the entire Image View
+        posterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
         Picasso.get().load(posterImageUri).into(posterImageView);
 
         return convertView;
