@@ -53,8 +53,9 @@ public final class MoviesJSONUtils {
 
             JSONObject trailerObj = trailerArray.getJSONObject(i);
 
-            int trailerIdInt = trailerObj.getInt(TRAILER_ID);
-            String trailerId = Integer.toString(trailerIdInt);
+
+//             trailerIdInt = trailerObj.getString(TRAILER_ID);
+            String trailerId = trailerObj.getString(TRAILER_ID);
             String trailerKey = trailerObj.getString(TRAILER_KEY);
             String trailerSite = trailerObj.getString(TRAILER_SITE);
             String trailerType = trailerObj.getString(TRAILER_TYPE);

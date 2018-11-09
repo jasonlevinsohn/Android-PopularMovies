@@ -5,16 +5,20 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
+import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ChildActivity extends AppCompatActivity {
 
@@ -75,6 +79,11 @@ public class ChildActivity extends AppCompatActivity {
        mPlot = (TextView) findViewById(R.id.tv_movie_plot);
        mPlot.setText(moviePlot);
 
+       loadTrailerData(selectedMovie.getMovieId());
+
+       // Setup Recycler View for displaying Trailers.
+        RecyclerView trailerRv = (RecyclerView)
+
 
     }
 
@@ -97,10 +106,33 @@ public class ChildActivity extends AppCompatActivity {
             try {
                 String jsonTrailersResponse = NetworkUtils.getResponseFromHttpUrl(trailerUrl);
 
+                Trailer[] trailerModel = MoviesJSONUtils.getSimpleTrailerStringsFromJSON(ChildActivity.this, jsonTrailersResponse);
+
+                return trailerModel;
+
             } catch (Exception e){
                 e.printStackTrace();
                 return null;
             }
         }
+
+        @Override
+        protected void onPostExecute(Trailer[] trailers) {
+            super.onPostExecute(trailers);
+
+            final ArrayList<Trailer> trailerArrayList;
+
+            if (trailers != null) {
+                trailerArrayList = new ArrayList<>(Arrays.asList(trailers));
+                for (Trailer trailer : trailerArrayList) {
+                    Log.d(TAG, "Trailer Name: " + trailer.getName());
+                }
+            }
+        }
+
+    }
+
+    private void loadTrailerData(String movieId) {
+        new FetchMovieTrailers().execute(movieId);
     }
 }

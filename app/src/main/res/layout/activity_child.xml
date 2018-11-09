@@ -114,4 +114,11 @@
 
     </LinearLayout> <!--Main Vertical Layout for whole Activity-->
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailer_recycler_view"
+        android:layout_height="500dp"
+        android:background="@color/lightBlue"
+        android:layout_width="match_parent" />
+
+
 </android.support.constraint.ConstraintLayout>
