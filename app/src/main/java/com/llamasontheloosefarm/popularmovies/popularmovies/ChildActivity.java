@@ -3,10 +3,15 @@ package com.llamasontheloosefarm.popularmovies.popularmovies;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,10 +34,16 @@ public class ChildActivity extends AppCompatActivity {
     private TextView mVoteAverage;
     private TextView mPlot;
 
+    private RecyclerView mRecyclerView;
+    private TrailerAdapter mTrailerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child);
+
+
+
         String movieTitle;
         String moviePosterString;
         Uri moviePosterUri;
@@ -82,7 +93,16 @@ public class ChildActivity extends AppCompatActivity {
        loadTrailerData(selectedMovie.getMovieId());
 
        // Setup Recycler View for displaying Trailers.
-        RecyclerView trailerRv = (RecyclerView)
+       mRecyclerView = (RecyclerView) findViewById(R.id.trailer_recycler_view);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mTrailerAdapter = new TrailerAdapter();
+
+        mRecyclerView.setAdapter(mTrailerAdapter);
 
 
     }
@@ -120,13 +140,27 @@ public class ChildActivity extends AppCompatActivity {
         protected void onPostExecute(Trailer[] trailers) {
             super.onPostExecute(trailers);
 
-            final ArrayList<Trailer> trailerArrayList;
+            final ArrayList<Trailer> videoArrayList;
+            final ArrayList<Trailer> trailerArrayList = new ArrayList<>();
 
             if (trailers != null) {
-                trailerArrayList = new ArrayList<>(Arrays.asList(trailers));
-                for (Trailer trailer : trailerArrayList) {
-                    Log.d(TAG, "Trailer Name: " + trailer.getName());
+                videoArrayList = new ArrayList<>(Arrays.asList(trailers));
+                for (Trailer video : videoArrayList) {
+                    Log.d(TAG, "Trailer Name: " + video.getName());
+                    String type = video.getType();
+                    if (type.equals("Trailer")) {
+                        trailerArrayList.add(video);
+                    } else if (type.equals("Teaser")) {
+                        trailerArrayList.add(video);
+                    }
                 }
+
+                Trailer[] filteredTrailers = trailerArrayList.toArray(new Trailer[0]);
+
+                mTrailerAdapter.setTrailerData(filteredTrailers);
+
+            } else {
+                Log.d(TAG, "Trailer Name: Error fetching Trailers");
             }
         }
 

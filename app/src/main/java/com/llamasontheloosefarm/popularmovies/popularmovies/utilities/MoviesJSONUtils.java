@@ -1,6 +1,7 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
@@ -60,6 +61,8 @@ public final class MoviesJSONUtils {
             String trailerSite = trailerObj.getString(TRAILER_SITE);
             String trailerType = trailerObj.getString(TRAILER_TYPE);
             String trailerName = trailerObj.getString(TRAILER_NAME);
+
+            Log.d(TAG, "Trailer Type: " + trailerType);
 
             Trailer trailer = new Trailer(trailerId, trailerKey, trailerSite, trailerType, trailerName);
             parsedTrailerData[i] = trailer;
