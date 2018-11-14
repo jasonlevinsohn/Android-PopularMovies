@@ -46,13 +46,19 @@ public final class NetworkUtils {
 
     }
 
-    public static URL buildTrailerUrl(Context context, String movieId) {
+    public static URL buildTrailerReviewUrl(Context context, String movieId, boolean isReview) {
 
 //        https://api.themoviedb.org/3/movie/13/videos?api_key=60007b942d38fc29b45b19302efb7969&language=en-US
         String apiKey = context.getString(R.string.THE_MOVIE_DB_API_KEY);
 
+        String apiType = "videos";
+
+        if (isReview) {
+            apiType = "reviews";
+        }
+
         Uri buildUri = Uri.parse(MOVIES_DB_BASE_URL).buildUpon()
-                .encodedPath("3/movie/" + movieId + "/videos")
+                .encodedPath("3/movie/" + movieId + "/" + apiType)
                 .appendQueryParameter(API_KEY, apiKey)
                 .appendQueryParameter(LANGUAGE_KEY, LANGUAGE)
                 .build();

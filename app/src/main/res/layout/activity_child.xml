@@ -134,7 +134,29 @@
             <android.support.v7.widget.RecyclerView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/trailer_recycler_view"
-                android:layout_height="500dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+
+            <View
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:text="@string/tv_review_label"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+
+
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/review_recycler_view"
+                android:layout_height="wrap_content"
                 android:layout_width="match_parent" />
 
         </LinearLayout> <!--Main Vertical Layout for whole Activity-->

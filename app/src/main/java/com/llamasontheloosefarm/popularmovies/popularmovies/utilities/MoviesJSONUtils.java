@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.models.Review;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
 
 import org.json.JSONArray;
@@ -13,6 +14,61 @@ import org.json.JSONObject;
 import java.net.HttpURLConnection;
 
 public final class MoviesJSONUtils {
+
+    public static Review[] getSimpleReviewsStringsFromJSON(Context context, String reviewJSON) throws JSONException {
+
+        final String TAG = "Review JSON Extraction";
+
+        final String REVIEW_LIST = "results";
+
+        // JSON Fields
+        final String REVIEW_ID = "id";
+        final String REVIEW_AUTHOR = "author";
+        final String REVIEW_CONTENT = "content";
+        final String REVIEW_URL = "url";
+
+        // Status Code
+        final String REVIEW_STATUS_CODE = "cod";
+
+        Review[] parsedReviewData = null;
+
+        JSONObject reviewJson = new JSONObject(reviewJSON);
+
+        if (reviewJson.has(REVIEW_STATUS_CODE)) {
+            int errorCode = reviewJson.getInt(REVIEW_STATUS_CODE);
+
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    return null;
+                default:
+                    return null;
+            }
+        }
+
+        JSONArray reviewArray = reviewJson.getJSONArray(REVIEW_LIST);
+        parsedReviewData = new Review[reviewArray.length()];
+
+        for (int i = 0; i < reviewArray.length(); i++) {
+
+            JSONObject trailerObj = reviewArray.getJSONObject(i);
+
+
+            String reviewId = trailerObj.getString(REVIEW_ID);
+            String reviewAuthor = trailerObj.getString(REVIEW_AUTHOR);
+            String reviewContent = trailerObj.getString(REVIEW_CONTENT);
+            String reviewUrl = trailerObj.getString(REVIEW_URL);
+
+            Log.d(TAG, "Review Author: " + reviewAuthor);
+            Log.d(TAG, "Review Desc: " + reviewContent);
+
+            Review review = new Review(reviewId, reviewAuthor, reviewContent, reviewUrl);
+            parsedReviewData[i] = review;
+        }
+
+        return parsedReviewData;
+    }
 
     public static Trailer[] getSimpleTrailerStringsFromJSON(Context context, String trailerJSON) throws JSONException {
 

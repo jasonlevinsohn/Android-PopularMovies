@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.models.Review;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
@@ -34,8 +35,10 @@ public class ChildActivity extends AppCompatActivity {
     private TextView mVoteAverage;
     private TextView mPlot;
 
-    private RecyclerView mRecyclerView;
+    private RecyclerView mTrailerRecyclerView;
+    private RecyclerView mReviewRecyclerView;
     private TrailerAdapter mTrailerAdapter;
+    private ReviewAdapter mReviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,21 +93,69 @@ public class ChildActivity extends AppCompatActivity {
        mPlot = (TextView) findViewById(R.id.tv_movie_plot);
        mPlot.setText(moviePlot);
 
-       loadTrailerData(selectedMovie.getMovieId());
+       loadTrailerReviewData(selectedMovie.getMovieId());
 
        // Setup Recycler View for displaying Trailers.
-       mRecyclerView = (RecyclerView) findViewById(R.id.trailer_recycler_view);
-        LinearLayoutManager layoutManager =
+       mTrailerRecyclerView = (RecyclerView) findViewById(R.id.trailer_recycler_view);
+       mReviewRecyclerView = (RecyclerView) findViewById(R.id.review_recycler_view);
+        LinearLayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager reviewLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        mTrailerRecyclerView.setLayoutManager(trailerLayoutManager);
+        mReviewRecyclerView.setLayoutManager(reviewLayoutManager);
+
+        mTrailerRecyclerView.setHasFixedSize(true);
+        mReviewRecyclerView.setHasFixedSize(true);
 
         mTrailerAdapter = new TrailerAdapter();
+        mReviewAdapter = new ReviewAdapter();
 
-        mRecyclerView.setAdapter(mTrailerAdapter);
+        mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+        mReviewRecyclerView.setAdapter(mReviewAdapter);
+
+    }
+
+    public class FetchMovieReviews extends AsyncTask<String, Void, Review[]> {
+        @Override
+        protected Review[] doInBackground(String... params) {
+            if (params.length == 0) {
+                return null;
+            }
+
+            String movieId = "";
+
+            if (params[0] != null) {
+                movieId = params[0];
+            }
+
+            URL reviewUrl = NetworkUtils.buildTrailerReviewUrl(ChildActivity.this, movieId, true);
+
+            try {
+                String jsonReviewsResponse = NetworkUtils.getResponseFromHttpUrl(reviewUrl);
+
+                Review[] reviewModel = MoviesJSONUtils.getSimpleReviewsStringsFromJSON(ChildActivity.this, jsonReviewsResponse);
+
+                return reviewModel;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Review[] reviews) {
+            super.onPostExecute(reviews);
+
+//            final ArrayList<Review> reviewArrayList;
+
+            mReviewAdapter.setReviewData(reviews);
 
 
+        }
     }
 
     public class FetchMovieTrailers extends AsyncTask<String, Void, Trailer[]> {
@@ -121,7 +172,7 @@ public class ChildActivity extends AppCompatActivity {
                 movieId = params[0];
             }
 
-            URL trailerUrl = NetworkUtils.buildTrailerUrl(ChildActivity.this, movieId);
+            URL trailerUrl = NetworkUtils.buildTrailerReviewUrl(ChildActivity.this, movieId, false);
 
             try {
                 String jsonTrailersResponse = NetworkUtils.getResponseFromHttpUrl(trailerUrl);
@@ -159,6 +210,7 @@ public class ChildActivity extends AppCompatActivity {
 
                 mTrailerAdapter.setTrailerData(filteredTrailers);
 
+
             } else {
                 Log.d(TAG, "Trailer Name: Error fetching Trailers");
             }
@@ -166,7 +218,8 @@ public class ChildActivity extends AppCompatActivity {
 
     }
 
-    private void loadTrailerData(String movieId) {
+    private void loadTrailerReviewData(String movieId) {
         new FetchMovieTrailers().execute(movieId);
+        new FetchMovieReviews().execute(movieId);
     }
 }
