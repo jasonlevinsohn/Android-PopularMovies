@@ -7,6 +7,7 @@
     <string name="iv_poster_description">Poster Image of Movie</string>
     <string name="sort_popular">Popular</string>
     <string name="sort_toprated">Top Rated</string>
+    <string name="sort_favorites">Favorites</string>
     <string name="tv_trailer_label">Trailers:</string>
     <string name="tv_review_label">Reviews:</string>
 </resources>

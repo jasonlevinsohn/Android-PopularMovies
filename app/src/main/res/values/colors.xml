@@ -6,5 +6,9 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="lightBlue">#C4EDEB</color>
+    <color name="yellow">#F5DD72</color>
+    <color name="lightYellow">#FAECB1</color>
+    <color name="blueSelector">#03A9F4</color>
+    <color name="lightBlueSelector">#c5ecfe</color>
 
 </resources>
