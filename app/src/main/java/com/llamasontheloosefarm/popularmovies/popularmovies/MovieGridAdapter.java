@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 

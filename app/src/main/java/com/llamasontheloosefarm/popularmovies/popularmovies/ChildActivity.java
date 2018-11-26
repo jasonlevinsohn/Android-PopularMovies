@@ -6,22 +6,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.AppDatabase;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.MovieDbHelper;
-import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Review;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
@@ -50,7 +48,8 @@ public class ChildActivity extends AppCompatActivity {
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
 
-    private SQLiteDatabase mDb;
+//    private SQLiteDatabase mDb;
+    private AppDatabase roomDb;
     private Cursor movieCursor;
 
     @Override
@@ -162,33 +161,37 @@ public class ChildActivity extends AppCompatActivity {
         mReviewRecyclerView.setAdapter(mReviewAdapter);
 
         // Initialize Database
-        MovieDbHelper dbHelper = new MovieDbHelper(this);
-        mDb = dbHelper.getWritableDatabase();
+//        MovieDbHelper dbHelper = new MovieDbHelper(this);
+//        mDb = dbHelper.getWritableDatabase();
+
+        // Using Room Database
+        roomDb = AppDatabase.getsInstance(getApplicationContext());
 
         // Check if this movie is in our Favorites Database.
-        String selection = MovieEntry.MOVIE_ID + " = ?";
-        String[] selectionArgs = { selectedMovie.getMovieId() };
+//        String selection = MovieEntry.MOVIE_ID + " = ?";
+//        String[] selectionArgs = { selectedMovie.getMovieId() };
 
-        movieCursor = mDb.query(
-                MovieEntry.TABLE_NAME,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        int movieCount = movieCursor.getCount();
+//        movieCursor = mDb.query(
+//                MovieEntry.TABLE_NAME,
+//                null,
+//                selection,
+//                selectionArgs,
+//                null,
+//                null,
+//                null
+//        );
+//        int movieCount = movieCursor.getCount();
+//
+//        if (movieCount > 0) {
+//            mAddToFavorites.setVisibility(View.INVISIBLE);
+//            mRemoveFromFavorites.setVisibility(View.VISIBLE);
+//        }
 
-        if (movieCount > 0) {
-            mAddToFavorites.setVisibility(View.INVISIBLE);
-            mRemoveFromFavorites.setVisibility(View.VISIBLE);
-        }
-
-        while(movieCursor.moveToNext()) {
-            String dbTitle = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
-            Log.d(TAG, "Movie Cursor Title: " + dbTitle);
-        }
+//        while(movieCursor.moveToNext()) {
+//            String dbTitle = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
+//            Log.d(TAG, "Movie Cursor Title: " + dbTitle);
+//        }
+        Stetho.initializeWithDefaults(this);
     }
 
     public class FetchMovieReviews extends AsyncTask<String, Void, Review[]> {
@@ -296,22 +299,24 @@ public class ChildActivity extends AppCompatActivity {
         new FetchMovieReviews().execute(movieId);
     }
 
-    private long addMovieToFavorites(Movie selectedMovie) {
-        String id = selectedMovie.getMovieId();
+    private void addMovieToFavorites(Movie selectedMovie) {
+//        String id = selectedMovie.getMovieId();
         String title = selectedMovie.getTitle();
-        String poster = selectedMovie.getPosterImage();
-        String releaseDate = selectedMovie.getReleaseDate();
-        String voteAverage = selectedMovie.getVoteAverage();
-        String plot = selectedMovie.getPlot();
+//        String poster = selectedMovie.getPosterImage();
+//        String releaseDate = selectedMovie.getReleaseDate();
+//        String voteAverage = selectedMovie.getVoteAverage();
+//        String plot = selectedMovie.getPlot();
+//
+//        ContentValues cv = new ContentValues();
 
-        ContentValues cv = new ContentValues();
+//        cv.put(MovieEntry.MOVIE_ID, id);
+//        cv.put(MovieEntry.COLUMN_TITLE, title);
+//        cv.put(MovieEntry.COLUMN_POSTER_IMAGE, poster);
+//        cv.put(MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
+//        cv.put(MovieEntry.COLUMN_VOTE_AVERAGE, voteAverage);
+//        cv.put(MovieEntry.COLUMN_PLOT, plot);
 
-        cv.put(MovieEntry.MOVIE_ID, id);
-        cv.put(MovieEntry.COLUMN_TITLE, title);
-        cv.put(MovieEntry.COLUMN_POSTER_IMAGE, poster);
-        cv.put(MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
-        cv.put(MovieEntry.COLUMN_VOTE_AVERAGE, voteAverage);
-        cv.put(MovieEntry.COLUMN_PLOT, plot);
+        roomDb.movieDao().insertMovie(selectedMovie);
 
         Toast.makeText(ChildActivity.this,
                 title + " has been added to the favorites list.", Toast.LENGTH_SHORT).show();
@@ -319,17 +324,18 @@ public class ChildActivity extends AppCompatActivity {
         mAddToFavorites.setVisibility(View.INVISIBLE);
         mRemoveFromFavorites.setVisibility(View.VISIBLE);
 
-        return mDb.insert(MovieEntry.TABLE_NAME, null, cv);
+//        return mDb.insert(MovieEntry.TABLE_NAME, null, cv);
 
     }
 
     private boolean removeMovieFromFavorites(Cursor cursor, String id) {
 
-        return mDb.delete(
-                MovieEntry.TABLE_NAME,
-                MovieEntry.MOVIE_ID + "=" + id,
-                null
-        ) > 0;
+//        return mDb.delete(
+//                MovieEntry.TABLE_NAME,
+//                MovieEntry.MOVIE_ID + "=" + id,
+//                null
+//        ) > 0;
+        return true;
 
     }
 }

@@ -3,7 +3,7 @@ package com.llamasontheloosefarm.popularmovies.popularmovies.utilities;
 import android.content.Context;
 import android.util.Log;
 
-import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Review;
 import com.llamasontheloosefarm.popularmovies.popularmovies.models.Trailer;
 

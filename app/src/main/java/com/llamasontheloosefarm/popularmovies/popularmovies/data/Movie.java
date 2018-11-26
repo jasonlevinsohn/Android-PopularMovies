@@ -1,10 +1,17 @@
-package com.llamasontheloosefarm.popularmovies.popularmovies.models;
+package com.llamasontheloosefarm.popularmovies.popularmovies.data;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+
+@Entity(tableName = "roommovie")
 public class Movie implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String movieId;
     private String title;
     private String posterImage;
@@ -12,6 +19,8 @@ public class Movie implements Parcelable {
     private String voteAverage;
     private String plot;
 
+
+    @Ignore
     public Movie(String movieId, String title, String posterImage, String releaseDate, String voteAverage, String plot) {
         this.movieId = movieId;
         this.title = title;
@@ -20,6 +29,19 @@ public class Movie implements Parcelable {
         this.voteAverage = voteAverage;
         this.plot = plot;
     }
+
+    public Movie(int id, String movieId, String title, String posterImage, String releaseDate, String voteAverage, String plot) {
+        this.id = id;
+        this.movieId = movieId;
+        this.title = title;
+        this.posterImage = posterImage;
+        this.releaseDate = releaseDate;
+        this.voteAverage = voteAverage;
+        this.plot = plot;
+    }
+
+
+    public int getId() { return this.id; }
 
     public String getMovieId() { return this.movieId; }
 

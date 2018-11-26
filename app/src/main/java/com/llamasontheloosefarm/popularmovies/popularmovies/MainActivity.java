@@ -21,7 +21,7 @@ import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.MovieContract.*;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.MovieDbHelper;
-import com.llamasontheloosefarm.popularmovies.popularmovies.models.Movie;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.Movie;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.MoviesJSONUtils;
 import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUtils;
 
