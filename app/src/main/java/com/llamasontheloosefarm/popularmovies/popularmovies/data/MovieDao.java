@@ -22,5 +22,8 @@ public interface MovieDao {
     void updateMovie(Movie movieEntry);
 
     @Delete
-    void deleteMovie(Movie movieEntry);
+    int deleteMovie(Movie movieEntry);
+
+    @Query("SELECT * FROM roommovie WHERE movieId = :movieId")
+    Movie loadTaskByMovieId(String movieId);
 }

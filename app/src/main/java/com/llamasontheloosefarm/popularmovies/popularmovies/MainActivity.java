@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.llamasontheloosefarm.popularmovies.popularmovies.data.AppDatabase;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.MovieContract.*;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.MovieDbHelper;
 import com.llamasontheloosefarm.popularmovies.popularmovies.data.Movie;
@@ -28,6 +29,7 @@ import com.llamasontheloosefarm.popularmovies.popularmovies.utilities.NetworkUti
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 
@@ -41,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar mLoadingIndicator;
 
-    private SQLiteDatabase mDb;
+//    private SQLiteDatabase mDb;
+    private AppDatabase roomDb;
     private Cursor movieCursor;
     Toolbar toolbar;
     private static final String SORT_BY_POPULARITY = "popularity";
@@ -58,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         MovieDbHelper dbHelper = new MovieDbHelper(this);
-        mDb = dbHelper.getReadableDatabase();
+//        mDb = dbHelper.getReadableDatabase();
+        roomDb = AppDatabase.getsInstance((getApplicationContext()));
 
         gridView = (GridView) findViewById(R.id.movies_grid_view);
 
@@ -81,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentSort == SORT_BY_FAVORITES) {
+            loadMovieData(SORT_BY_FAVORITES);
+        }
     }
 
     @Override
@@ -199,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Movie[] getFavoriteMovies() {
-        Movie[] favoriteMovies;
+        List<Movie> favoriteMovies;
+        Movie[] favoriteMovieArray;
         int movieCount;
         int counter = 0;
         String id;
@@ -210,32 +223,37 @@ public class MainActivity extends AppCompatActivity {
         String plot;
 
 
-        movieCursor = mDb.query(
-                MovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                MovieEntry._ID
-        );
-        movieCount = movieCursor.getCount();
-        if (movieCount > 0) {
-            favoriteMovies = new Movie[movieCount];
-            while(movieCursor.moveToNext()) {
-                id = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.MOVIE_ID));
-                title = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
-                poster = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_IMAGE));
-                releaseDate = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
-                voteAverage = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_VOTE_AVERAGE));
-                plot = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_PLOT));
+//        movieCursor = mDb.query(
+//                MovieEntry.TABLE_NAME,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                MovieEntry._ID
+//        );
+//        movieCount = movieCursor.getCount();
+//        if (movieCount > 0) {
+//            favoriteMovies = new Movie[movieCount];
+//            while(movieCursor.moveToNext()) {
+//                id = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.MOVIE_ID));
+//                title = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
+//                poster = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_IMAGE));
+//                releaseDate = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
+//                voteAverage = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_VOTE_AVERAGE));
+//                plot = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_PLOT));
+//
+//                Movie favMovie = new Movie(id, title, poster, releaseDate, voteAverage, plot);
+//                favoriteMovies[counter] = favMovie;
+//                counter++;
+//
+//            }
+//            return favoriteMovies;
+        favoriteMovies = roomDb.movieDao().loadAllMovies();
+        if (favoriteMovies.size() > 0) {
 
-                Movie favMovie = new Movie(id, title, poster, releaseDate, voteAverage, plot);
-                favoriteMovies[counter] = favMovie;
-                counter++;
-
-            }
-            return favoriteMovies;
+            favoriteMovieArray = favoriteMovies.toArray(new Movie[favoriteMovies.size()]);
+            return favoriteMovieArray;
 
         } else {
             return new Movie[0];
@@ -251,11 +269,13 @@ public class MainActivity extends AppCompatActivity {
             movieArrayList = new ArrayList<Movie>(Arrays.asList(movieData));
 
             // Hacks - BEGIN
-            movieAdapter = null;
-            gridView.invalidateViews();
+//            movieAdapter = null;
+//            gridView.invalidateViews();
             // Hacks - END
 
             movieAdapter = new MovieGridAdapter(MainActivity.this, movieArrayList);
+            movieAdapter.notifyDataSetChanged();
+            gridView.invalidateViews();
             gridView.setAdapter(movieAdapter);
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

@@ -123,7 +123,7 @@ public class ChildActivity extends AppCompatActivity {
            @Override
            public void onClick(View view) {
                boolean movieRemoved;
-               movieRemoved = removeMovieFromFavorites(movieCursor, selectedMovie.getMovieId());
+               movieRemoved = removeMovieFromFavorites(selectedMovie);
 
                if (movieRemoved) {
                    mAddToFavorites.setVisibility(View.VISIBLE);
@@ -191,6 +191,15 @@ public class ChildActivity extends AppCompatActivity {
 //            String dbTitle = movieCursor.getString(movieCursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
 //            Log.d(TAG, "Movie Cursor Title: " + dbTitle);
 //        }
+
+        // Check to see if the movie is already in our room database.
+        Movie favoriteMovie = roomDb.movieDao().loadTaskByMovieId(selectedMovie.getMovieId());
+        if (favoriteMovie != null) {
+            mAddToFavorites.setVisibility(View.INVISIBLE);
+            mRemoveFromFavorites.setVisibility(View.VISIBLE);
+        }
+
+
         Stetho.initializeWithDefaults(this);
     }
 
@@ -328,14 +337,18 @@ public class ChildActivity extends AppCompatActivity {
 
     }
 
-    private boolean removeMovieFromFavorites(Cursor cursor, String id) {
+    private boolean removeMovieFromFavorites(Movie selected) {
+
+        Movie movieToRemove = roomDb.movieDao().loadTaskByMovieId(selected.getMovieId());
+
+        int movieRemoved = roomDb.movieDao().deleteMovie(movieToRemove);
 
 //        return mDb.delete(
 //                MovieEntry.TABLE_NAME,
 //                MovieEntry.MOVIE_ID + "=" + id,
 //                null
 //        ) > 0;
-        return true;
+        return (movieRemoved > 0);
 
     }
 }
