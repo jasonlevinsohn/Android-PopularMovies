@@ -101,11 +101,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState);
-        Log.d(TAG, "State: onRestoreInstanceState");
-    }
+
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
@@ -274,8 +270,8 @@ public class MainActivity extends AppCompatActivity {
             // Hacks - END
 
             movieAdapter = new MovieGridAdapter(MainActivity.this, movieArrayList);
-            movieAdapter.notifyDataSetChanged();
-            gridView.invalidateViews();
+//            movieAdapter.notifyDataSetChanged();
+//            gridView.invalidateViews();
             gridView.setAdapter(movieAdapter);
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -297,8 +293,9 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
-            movieAdapter.notifyDataSetChanged();
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            gridView.setVisibility(View.VISIBLE);
+//            movieAdapter.notifyDataSetChanged();
         }
 
     }
