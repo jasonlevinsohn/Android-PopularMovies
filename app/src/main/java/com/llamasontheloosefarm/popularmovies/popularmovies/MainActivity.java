@@ -1,5 +1,7 @@
 package com.llamasontheloosefarm.popularmovies.popularmovies;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -7,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SORT_BY_TOP_RATED = "top_rated";
     private static final String SORT_BY_FAVORITES = "favorites";
     private String currentSort;
+    private Movie[] favoriteMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        MovieDbHelper dbHelper = new MovieDbHelper(this);
+//        MovieDbHelper dbHelper = new MovieDbHelper(this);
 //        mDb = dbHelper.getReadableDatabase();
         roomDb = AppDatabase.getsInstance((getApplicationContext()));
 
@@ -70,14 +74,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             currentSort = savedInstanceState.getString(SAVED_SORT_BY);
-            if (currentSort != null) {
-                loadMovieData(currentSort);
-            }
         } else {
             currentSort = SORT_BY_POPULARITY;
-            loadMovieData(currentSort);
         }
 
+        // Start LiveData
+        retreiveMovies();
 
         Stetho.initializeWithDefaults(this);
 
@@ -87,12 +89,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void retreiveMovies() {
+        Log.d(TAG, "Database: actively pulling movies from the database");
+        final LiveData<List<Movie>> movies = roomDb.movieDao().loadAllMovies();
+        movies.observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                Log.d(TAG, "Database: retrieving movies from live data");
+                favoriteMovies = movies.toArray(new Movie[movies.size()]);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if (currentSort == SORT_BY_FAVORITES) {
-            loadMovieData(SORT_BY_FAVORITES);
-        }
+
+        loadMovieData(currentSort);
     }
 
     @Override
@@ -143,13 +156,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Movie[] movieData) {
 
-
-
             populateMovieList(movieData);
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             gridView.setVisibility(View.VISIBLE);
-
-
 
         }
 
@@ -161,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
         Movie[] movieData;
 //       URL movieUrl = NetworkUtils.buildUrl(this, "popular");
         if (sortBy.equals("favorites")) {
-            movieData = getFavoriteMovies();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+            gridView.setVisibility(View.INVISIBLE);
+            movieData = favoriteMovies;
             if (movieData != null) {
                 populateMovieList(movieData);
             }
@@ -206,17 +217,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private Movie[] getFavoriteMovies() {
-        List<Movie> favoriteMovies;
-        Movie[] favoriteMovieArray;
-        int movieCount;
-        int counter = 0;
-        String id;
-        String title;
-        String poster;
-        String releaseDate;
-        String voteAverage;
-        String plot;
+//    private Movie[] getFavoriteMovies() {
+//        final LiveData<List<Movie>> favoriteMovies;
+//        Movie[] favoriteMovieArray;
+//        int movieCount;
+//        int counter = 0;
+//        String id;
+//        String title;
+//        String poster;
+//        String releaseDate;
+//        String voteAverage;
+//        String plot;
 
 
 //        movieCursor = mDb.query(
@@ -245,17 +256,18 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //            return favoriteMovies;
-        favoriteMovies = roomDb.movieDao().loadAllMovies();
-        if (favoriteMovies.size() > 0) {
+//        Log.d(TAG, "Database: Actively retrieving the movies from the database.");
+//        favoriteMovies = roomDb.movieDao().loadAllMovies();
+//        if (favoriteMovies.size() > 0) {
+//
+//            favoriteMovieArray = favoriteMovies.toArray(new Movie[favoriteMovies.size()]);
+//            return favoriteMovieArray;
+//
+//        } else {
+//            return new Movie[0];
+//        }
 
-            favoriteMovieArray = favoriteMovies.toArray(new Movie[favoriteMovies.size()]);
-            return favoriteMovieArray;
-
-        } else {
-            return new Movie[0];
-        }
-
-    }
+//    }
 
     private void populateMovieList(Movie[] movieData) {
 

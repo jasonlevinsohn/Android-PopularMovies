@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +54,8 @@ public class ChildActivity extends AppCompatActivity {
 //    private SQLiteDatabase mDb;
     private AppDatabase roomDb;
     private Cursor movieCursor;
+
+    // Toast Message Handler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +127,8 @@ public class ChildActivity extends AppCompatActivity {
        mRemoveFromFavorites.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               boolean movieRemoved;
-               movieRemoved = removeMovieFromFavorites(selectedMovie);
+               removeMovieFromFavorites(selectedMovie);
 
-               if (movieRemoved) {
-                   mAddToFavorites.setVisibility(View.VISIBLE);
-                   mRemoveFromFavorites.setVisibility(View.INVISIBLE);
-               }
            }
        });
 
@@ -193,11 +193,23 @@ public class ChildActivity extends AppCompatActivity {
 //        }
 
         // Check to see if the movie is already in our room database.
-        Movie favoriteMovie = roomDb.movieDao().loadTaskByMovieId(selectedMovie.getMovieId());
-        if (favoriteMovie != null) {
-            mAddToFavorites.setVisibility(View.INVISIBLE);
-            mRemoveFromFavorites.setVisibility(View.VISIBLE);
-        }
+
+        AppExecutors.getsInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final Movie favoriteMovie = roomDb.movieDao().loadTaskByMovieId(selectedMovie.getMovieId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (favoriteMovie != null) {
+                            mAddToFavorites.setVisibility(View.INVISIBLE);
+                            mRemoveFromFavorites.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+                });
+            }
+        });
 
 
         Stetho.initializeWithDefaults(this);
@@ -310,7 +322,8 @@ public class ChildActivity extends AppCompatActivity {
 
     private void addMovieToFavorites(Movie selectedMovie) {
 //        String id = selectedMovie.getMovieId();
-        String title = selectedMovie.getTitle();
+        final String title = selectedMovie.getTitle();
+        final Movie movieToInsert = selectedMovie;
 //        String poster = selectedMovie.getPosterImage();
 //        String releaseDate = selectedMovie.getReleaseDate();
 //        String voteAverage = selectedMovie.getVoteAverage();
@@ -325,30 +338,65 @@ public class ChildActivity extends AppCompatActivity {
 //        cv.put(MovieEntry.COLUMN_VOTE_AVERAGE, voteAverage);
 //        cv.put(MovieEntry.COLUMN_PLOT, plot);
 
-        roomDb.movieDao().insertMovie(selectedMovie);
+        AppExecutors.getsInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                roomDb.movieDao().insertMovie(movieToInsert);
 
-        Toast.makeText(ChildActivity.this,
-                title + " has been added to the favorites list.", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAddToFavorites.setVisibility(View.INVISIBLE);
+                        mRemoveFromFavorites.setVisibility(View.VISIBLE);
+                    }
+                });
 
-        mAddToFavorites.setVisibility(View.INVISIBLE);
-        mRemoveFromFavorites.setVisibility(View.VISIBLE);
+            }
+        });
+
 
 //        return mDb.insert(MovieEntry.TABLE_NAME, null, cv);
 
     }
 
-    private boolean removeMovieFromFavorites(Movie selected) {
+    private void removeMovieFromFavorites(Movie selected) {
 
-        Movie movieToRemove = roomDb.movieDao().loadTaskByMovieId(selected.getMovieId());
+        final Movie selectedMovie = selected;
 
-        int movieRemoved = roomDb.movieDao().deleteMovie(movieToRemove);
+        AppExecutors.getsInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Movie movieToRemove = roomDb.movieDao().loadTaskByMovieId(selectedMovie.getMovieId());
+                int movieRemoved = roomDb.movieDao().deleteMovie(movieToRemove);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAddToFavorites.setVisibility(View.VISIBLE);
+                        mRemoveFromFavorites.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        });
+
 
 //        return mDb.delete(
 //                MovieEntry.TABLE_NAME,
 //                MovieEntry.MOVIE_ID + "=" + id,
 //                null
 //        ) > 0;
-        return (movieRemoved > 0);
 
     }
+
+//    final void finishRemovingItemFromDatabase(final boolean movieRemoved) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (movieRemoved) {
+//                } else {
+//                    Log.d(TAG, "Database: Could not remove the movie from the database");
+//                }
+//
+//            }
+//        });
+//    }
 }

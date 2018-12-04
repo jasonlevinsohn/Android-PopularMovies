@@ -22,7 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         AppDatabase.class,
                         AppDatabase.DATABASE_NAME
                 )
-                .allowMainThreadQueries()
+//                .allowMainThreadQueries()
                 .build();
             }
         }
