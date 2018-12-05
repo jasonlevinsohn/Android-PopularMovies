@@ -2,6 +2,7 @@ package com.llamasontheloosefarm.popularmovies.popularmovies;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -90,23 +91,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void retreiveMovies() {
-        Log.d(TAG, "Database: actively pulling movies from the database");
-        final LiveData<List<Movie>> movies = roomDb.movieDao().loadAllMovies();
-        movies.observe(this, new Observer<List<Movie>>() {
+        MovieViewModel viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+
+
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
-                Log.d(TAG, "Database: retrieving movies from live data");
+                Log.d(TAG, "Database: Updating list of movies from LiveData ViewModel");
                 favoriteMovies = movies.toArray(new Movie[movies.size()]);
+                loadMovieData(currentSort);
             }
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        loadMovieData(currentSort);
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -161,14 +158,11 @@ public class MainActivity extends AppCompatActivity {
             gridView.setVisibility(View.VISIBLE);
 
         }
-
-
     }
 
 
     private void loadMovieData(String sortBy) {
         Movie[] movieData;
-//       URL movieUrl = NetworkUtils.buildUrl(this, "popular");
         if (sortBy.equals("favorites")) {
             mLoadingIndicator.setVisibility(View.VISIBLE);
             gridView.setVisibility(View.INVISIBLE);
@@ -217,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // I want to leave this here to be able to review how hard it is to
+    // use a database without ROOM.
 //    private Movie[] getFavoriteMovies() {
 //        final LiveData<List<Movie>> favoriteMovies;
 //        Movie[] favoriteMovieArray;
@@ -276,14 +272,7 @@ public class MainActivity extends AppCompatActivity {
         if (movieData != null) {
             movieArrayList = new ArrayList<Movie>(Arrays.asList(movieData));
 
-            // Hacks - BEGIN
-//            movieAdapter = null;
-//            gridView.invalidateViews();
-            // Hacks - END
-
             movieAdapter = new MovieGridAdapter(MainActivity.this, movieArrayList);
-//            movieAdapter.notifyDataSetChanged();
-//            gridView.invalidateViews();
             gridView.setAdapter(movieAdapter);
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -292,10 +281,6 @@ public class MainActivity extends AppCompatActivity {
                     Class dest = ChildActivity.class;
                     Movie selectedMovie =  movieArrayList.get(i);
                     String title = selectedMovie.getTitle();
-//                        String poster = selectedMovie.getPosterImage();
-//                        String releaseDate = selectedMovie.getReleaseDate();
-//                        String voteAverage = selectedMovie.getVoteAverage();
-//                        String plot = selectedMovie.getPlot();
 
                     Log.d(TAG, "Movie Id Title: " + title);
 
@@ -307,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
             });
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             gridView.setVisibility(View.VISIBLE);
-//            movieAdapter.notifyDataSetChanged();
         }
 
     }

@@ -167,6 +167,9 @@ public class ChildActivity extends AppCompatActivity {
         // Using Room Database
         roomDb = AppDatabase.getsInstance(getApplicationContext());
 
+        // I want to leave this here to review how hard it is
+        // to use a database without using ROOM ORM.
+
         // Check if this movie is in our Favorites Database.
 //        String selection = MovieEntry.MOVIE_ID + " = ?";
 //        String[] selectionArgs = { selectedMovie.getMovieId() };
@@ -324,6 +327,8 @@ public class ChildActivity extends AppCompatActivity {
 //        String id = selectedMovie.getMovieId();
         final String title = selectedMovie.getTitle();
         final Movie movieToInsert = selectedMovie;
+        // I want to leave this here to review how hard it is
+        // to use a database without using ROOM ORM.
 //        String poster = selectedMovie.getPosterImage();
 //        String releaseDate = selectedMovie.getReleaseDate();
 //        String voteAverage = selectedMovie.getVoteAverage();
@@ -378,25 +383,5 @@ public class ChildActivity extends AppCompatActivity {
             }
         });
 
-
-//        return mDb.delete(
-//                MovieEntry.TABLE_NAME,
-//                MovieEntry.MOVIE_ID + "=" + id,
-//                null
-//        ) > 0;
-
     }
-
-//    final void finishRemovingItemFromDatabase(final boolean movieRemoved) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (movieRemoved) {
-//                } else {
-//                    Log.d(TAG, "Database: Could not remove the movie from the database");
-//                }
-//
-//            }
-//        });
-//    }
 }
